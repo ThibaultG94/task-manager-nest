@@ -81,7 +81,6 @@ export class UsersService {
       throw new BadRequestException('Cannot add yourself as contact');
     }
 
-    const contact = await this.findOne(contactId);
     const userContact = this.userContactsRepository.create({
       user: { id: userId },
       contact: { id: contactId }
@@ -111,7 +110,6 @@ export class UsersService {
       throw new BadRequestException('Cannot block yourself');
     }
 
-    const blocked = await this.findOne(blockedUserId);
     const userBlocked = this.userBlockedRepository.create({
       user: { id: userId },
       blockedUser: { id: blockedUserId }
