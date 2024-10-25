@@ -19,7 +19,7 @@ import { UserBlocked } from './users/entities/user-blocked.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, UserContact, UserBlocked],
-      synchronize: true, // À mettre à false en production !
+      synchronize: process.env.DB_SYNC === 'true',
     }),
     UsersModule
   ],
