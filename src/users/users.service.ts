@@ -45,7 +45,7 @@ export class UsersService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const user = await this.usersRepository.findOne({
       where: { id },
       select: ['id', 'username', 'email', 'avatar', 'role', 'tips', 'createdAt'],
@@ -59,7 +59,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
 
     if (updateUserDto.password) {
@@ -70,13 +70,13 @@ export class UsersService {
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.findOne(id);
     await this.usersRepository.remove(user);
   }
 
   // Méthodes pour gérer les contacts
-  async addContact(userId: number, contactId: number) {
+  async addContact(userId: string, contactId: string) {
     if (userId === contactId) {
       throw new BadRequestException('Cannot add yourself as contact');
     }
@@ -89,7 +89,7 @@ export class UsersService {
     return this.userContactsRepository.save(userContact);
   }
 
-  async removeContact(userId: number, contactId: number) {
+  async removeContact(userId: string, contactId: string) {
     const contact = await this.userContactsRepository.findOne({
       where: {
         user: { id: userId },
@@ -105,7 +105,7 @@ export class UsersService {
   }
 
   // Méthodes pour gérer les utilisateurs bloqués
-  async blockUser(userId: number, blockedUserId: number) {
+  async blockUser(userId: string, blockedUserId: string) {
     if (userId === blockedUserId) {
       throw new BadRequestException('Cannot block yourself');
     }
@@ -118,7 +118,7 @@ export class UsersService {
     return this.userBlockedRepository.save(userBlocked);
   }
 
-  async unblockUser(userId: number, blockedUserId: number) {
+  async unblockUser(userId: string, blockedUserId: string) {
     const blocked = await this.userBlockedRepository.findOne({
       where: {
         user: { id: userId },
