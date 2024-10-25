@@ -1,16 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { UserContact } from "./user-contact.entity";
 import { UserBlocked } from "./user-blocked.entity";
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
-    @Column()
+    @Column({ unique: true })
     username: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()
@@ -19,7 +19,7 @@ export class User {
     @Column({ default: "user" })
     role: string;
     
-    @Column()
+    @Column({ nullable: true })
     avatar: string;
         
     @OneToMany(() => UserContact, userContact => userContact.user)
@@ -31,9 +31,9 @@ export class User {
     @Column({ default: true })
     tips: boolean;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @CreateDateColumn()
     createdAt: Date;
 
-    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn()
     updatedAt: Date;
 }
