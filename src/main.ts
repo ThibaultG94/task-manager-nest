@@ -6,9 +6,9 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   console.log('🚀 Application starting...');
   console.log('📊 Database config:', {
-    host: typeof(process.env.DB_HOST),
-    port: typeof(process.env.DB_PORT),
-    database: typeof(process.env.DB_DATABASE),
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    database: process.env.DB_DATABASE,
   });
 
   try {
