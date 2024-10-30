@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users/entities/user.entity';
 
-@Controller('api')
+@Controller() // Enlève le 'api' ici
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -20,7 +20,6 @@ export class AppController {
   @Get('test-db')
   async testDb() {
     try {
-      // Tente de compter les utilisateurs
       const count = await this.userRepository.count();
       return {
         status: 'success',

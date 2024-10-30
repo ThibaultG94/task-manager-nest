@@ -11,7 +11,6 @@ import { UserBlocked } from './users/entities/user-blocked.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forFeature([User]),
     TypeOrmModule.forRoot({
       type: 'mariadb',
       host: process.env.DB_HOST,
@@ -20,20 +19,16 @@ import { UserBlocked } from './users/entities/user-blocked.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, UserContact, UserBlocked],
-      synchronize: process.env.DB_SYNC === 'true',
+      synchronize: true,
+      autoLoadEntities: true,
       extra: {
         connectionLimit: 5,
         connectTimeout: 60000,
-        acquireTimeout: 60000,
-        timeout: 60000,
         waitForConnections: true,
       },
-      // Gestion des reconnexions
-      keepConnectionAlive: true,
-      retryAttempts: 3,
-      retryDelay: 3000,
-      poolSize: 5
+      logging: true
     }),
+    TypeOrmModule.forFeature([User]),
     UsersModule
   ],
   controllers: [AppController],
