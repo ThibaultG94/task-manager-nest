@@ -12,21 +12,16 @@ import { UserBlocked } from './users/entities/user-blocked.entity';
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
+      url: process.env.DATABASE_URL,
       type: 'mariadb',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT) || 3306,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
       entities: [User, UserContact, UserBlocked],
-      synchronize: true,
+      synchronize: process.env.DB_SYNC ? true : false,
       autoLoadEntities: true,
       extra: {
         connectionLimit: 5,
-        connectTimeout: 60000,
         waitForConnections: true,
       },
-      logging: true
+      logging: process.env.NODE_ENV === 'development', // Logs uniquement en dev
     }),
     TypeOrmModule.forFeature([User]),
     UsersModule
