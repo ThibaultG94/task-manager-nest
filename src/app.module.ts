@@ -7,6 +7,8 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { UserContact } from './users/entities/user-contact.entity';
 import { UserBlocked } from './users/entities/user-blocked.entity';
+import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,7 +26,8 @@ import { UserBlocked } from './users/entities/user-blocked.entity';
       logging: process.env.NODE_ENV === 'development', // Logs uniquement en dev
     }),
     TypeOrmModule.forFeature([User]),
-    UsersModule
+    UsersModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
