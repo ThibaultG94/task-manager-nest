@@ -8,7 +8,6 @@ import { User } from './users/entities/user.entity';
 import { UserContact } from './users/entities/user-contact.entity';
 import { UserBlocked } from './users/entities/user-blocked.entity';
 import { AuthModule } from './auth/auth.module';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
