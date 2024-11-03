@@ -1,34 +1,85 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, Res, UseGuards, Req } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+    constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
-  }
+    @Post('login')
+    @HttpCode(200)
+    async login(
+        @Body() loginDto: LoginDto,
+        @Res({ passthrough: true }) response: Response
+    ) {
+        const result = await this.authService.login(loginDto);
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
+        // Configuration des cookies sécurisés
+        response.cookie('token', result.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 15 * 60 * 1000 // 15 minutes
+        });
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
+        response.cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+            path: '/api/auth/refresh-token' // Restreint le cookie à la route de refresh
+        });
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
+        return {
+            message: 'Login successful',
+            user: result.user
+        };
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
-  }
+    @UseGuards(JwtAuthGuard)
+    @Post('logout')
+    @HttpCode(200)
+    async logout(
+        @Req() req,
+        @Res({ passthrough: true }) response: Response
+    ) {
+        const refreshToken = req.cookies['refreshToken'];
+        if (refreshToken) {
+            await this.authService.logout(refreshToken);
+        }
+
+        response.clearCookie('token');
+        response.clearCookie('refreshToken', { path: '/api/auth/refresh-token' });
+
+        return { message: 'Logout successful' };
+    }
+
+    @Post('refresh-token')
+    @HttpCode(200)
+    async refreshToken(
+        @Req() req,
+        @Res({ passthrough: true }) response: Response
+    ) {
+        const refreshToken = req.cookies['refreshToken'];
+        const tokens = await this.authService.refreshToken(refreshToken);
+
+        response.cookie('token', tokens.accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 15 * 60 * 1000
+        });
+
+        response.cookie('refreshToken', tokens.refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/api/auth/refresh-token'
+        });
+
+        return { message: 'Token refreshed successfully' };
+    }
 }
