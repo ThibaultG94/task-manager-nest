@@ -11,6 +11,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
     imports: [
+        ConfigModule,
         PassportModule,
         TypeOrmModule.forFeature([User, RefreshToken]),
         JwtModule.registerAsync({
