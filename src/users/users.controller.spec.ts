@@ -8,6 +8,24 @@ import { UserBlocked } from './entities/user-blocked.entity';
 
 describe('UsersController', () => {
   let controller: UsersController;
+  let service: UsersService;
+
+  const mockUsersRepository = {
+    find: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockContactsRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const mockBlockedRepository = {
+    create: jest.fn(),
+    save: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,35 +34,26 @@ describe('UsersController', () => {
         UsersService,
         {
           provide: getRepositoryToken(User),
-          useValue: {
-            find: jest.fn().mockResolvedValue([]),
-            findOne: jest.fn().mockResolvedValue(null),
-            create: jest.fn().mockReturnValue({}),
-            save: jest.fn().mockResolvedValue({}),
-            // autres méthodes nécessaires
-          }
+          useValue: mockUsersRepository
         },
         {
           provide: getRepositoryToken(UserContact),
-          useValue: {
-            create: jest.fn().mockReturnValue({}),
-            save: jest.fn().mockResolvedValue({}),
-            // autres méthodes nécessaires
-          }
+          useValue: mockContactsRepository
         },
         {
           provide: getRepositoryToken(UserBlocked),
-          useValue: {
-            create: jest.fn().mockReturnValue({}),
-            save: jest.fn().mockResolvedValue({}),
-            // autres méthodes nécessaires
-          }
+          useValue: mockBlockedRepository
         }
       ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
+    service = module.get<UsersService>(UsersService);
   });
 
-  // ... tests ...
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+
+  // Ajouter plus de tests ici
 });
