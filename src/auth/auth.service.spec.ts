@@ -24,7 +24,7 @@ describe('AuthService', () => {
     tips: true,
     contacts: [],
     blocked: [],
-    refreshTokens: [],
+    refreshTokens: Promise.resolve([]),
     createdAt: new Date(),
     updatedAt: new Date()
   } as User;

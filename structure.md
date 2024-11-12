@@ -34,6 +34,9 @@ task-manager-nest/
 │   │   │   └── rate-limiter.middleware.ts
 │   │   └── pipes/
 │   │       └── sanitize.pipe.ts
+│   ├── test
+│   │   └── mocks
+│   │       └── repository.mocks.ts
 │   │
 │   ├── types/               # Types globaux
 │   │   └── express.d.ts
