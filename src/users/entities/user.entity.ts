@@ -32,8 +32,10 @@ export class User {
     @Column({ default: true })
     tips: boolean;
 
-    @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
-    refreshTokens: RefreshToken[];
+    @OneToMany(() => RefreshToken, refreshToken => refreshToken.user, {
+        lazy: true // Utiliser le chargement paresseux
+      })
+    refreshTokens: Promise<RefreshToken[]>;
 
     @CreateDateColumn()
     createdAt: Date;

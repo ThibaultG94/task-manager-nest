@@ -59,8 +59,9 @@ task-manager-nest/
 │   └── main.ts
 │
 ├── test/                    # Tests e2e
-│   ├── app.e2e-spec.ts
-│   └── jest-e2e.json
+│   ├── jest-setup.ts        # Configuration globale des tests
+│   ├── jest-e2e.json        # Configuration pour les tests e2e
+│   └── app.e2e-spec.ts
 │
 ├── .env                     # Variables d'environnement
 ├── .eslintrc.js            # Configuration ESLint
@@ -69,6 +70,7 @@ task-manager-nest/
 ├── Dockerfile              # Configuration Docker
 ├── README.md
 ├── nest-cli.json           # Configuration NestJS CLI
+├── jest.config.js          # Configuration principale de Jest
 ├── package.json            # Dépendances et scripts
 ├── tsconfig.build.json     # Configuration TypeScript pour build
 └── tsconfig.json           # Configuration TypeScript principale

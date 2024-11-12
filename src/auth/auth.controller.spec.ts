@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
+import { UnauthorizedException } from '@nestjs/common';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -13,6 +14,11 @@ describe('AuthController', () => {
     cookie: jest.fn().mockReturnThis(),
     clearCookie: jest.fn().mockReturnThis(),
   } as unknown as Response;
+
+  // Mock de la requête avec CSRF token
+  const mockReq = {
+    csrfToken: jest.fn().mockReturnValue('csrf-token'),
+  };
 
   // Mock des données renvoyées par AuthService
   const mockAuthResult = {
@@ -100,6 +106,22 @@ describe('AuthController', () => {
         message: 'Login successful',
         user: mockAuthResult.user
       });
+    });
+
+    it('should handle login failure', async () => {
+      const loginDto: LoginDto = {
+        email: 'test@example.com',
+        password: 'WrongPassword'
+      };
+  
+      jest.spyOn(authService, 'login')
+        .mockRejectedValueOnce(new UnauthorizedException());
+  
+      await expect(
+        controller.login(mockReq as any, loginDto, mockResponse)
+      ).rejects.toThrow(UnauthorizedException);
+  
+      expect(mockResponse.cookie).not.toHaveBeenCalled();
     });
   });
 
