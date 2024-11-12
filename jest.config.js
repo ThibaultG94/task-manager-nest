@@ -12,9 +12,10 @@ module.exports = {
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   roots: ['<rootDir>/src/'],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: '<rootDir>/',
-  }),
+  moduleNameMapper: {
+    '@/test/(.*)': '<rootDir>/test/$1',
+    '@/(.*)': '<rootDir>/src/$1',
+  },
   setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
   moduleDirectories: ['node_modules', 'src'],
   coveragePathIgnorePatterns: [

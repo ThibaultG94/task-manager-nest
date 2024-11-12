@@ -34,9 +34,6 @@ task-manager-nest/
 │   │   │   └── rate-limiter.middleware.ts
 │   │   └── pipes/
 │   │       └── sanitize.pipe.ts
-│   ├── test
-│   │   └── mocks
-│   │       └── repository.mocks.ts
 │   │
 │   ├── types/               # Types globaux
 │   │   └── express.d.ts
@@ -61,10 +58,15 @@ task-manager-nest/
 │   ├── app.service.ts
 │   └── main.ts
 │
-├── test/                    # Tests e2e
-│   ├── jest-setup.ts        # Configuration globale des tests
-│   ├── jest-e2e.json        # Configuration pour les tests e2e
-│   └── app.e2e-spec.ts
+├── test/                     # Dossier racine pour tous les tests
+│   ├── e2e/                  # Tests end-to-end
+│   │   └── app.e2e-spec.ts
+│   ├── mocks/                # Mocks réutilisables
+│   │   └── repository.mocks.ts
+│   ├── utils/                # Utilitaires de test
+│   │   └── test-utils.ts
+│   ├── jest-setup.ts
+│   └── jest-e2e.json
 │
 ├── .env                     # Variables d'environnement
 ├── .eslintrc.js            # Configuration ESLint
