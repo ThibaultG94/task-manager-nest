@@ -1,5 +1,5 @@
 import { Controller, Post, Body, HttpCode, Res, UseGuards, Req } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -11,6 +11,7 @@ export class AuthController {
     @Post('login')
     @HttpCode(200)
     async login(
+        @Req() req: Request,
         @Body() loginDto: LoginDto,
         @Res({ passthrough: true }) response: Response
     ) {
@@ -32,6 +33,16 @@ export class AuthController {
             path: '/api/auth/refresh-token' // Restreint le cookie à la route de refresh
         });
 
+        // Générer un nouveau token CSRF après login si la fonction existe
+        if (req.csrfToken) {
+            response.cookie('XSRF-TOKEN', req.csrfToken(), {
+                httpOnly: false, // Doit être accessible par le frontend
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 24 * 60 * 60 * 1000 // 24 heures
+            });
+        }
+
         return {
             message: 'Login successful',
             user: result.user
@@ -42,7 +53,7 @@ export class AuthController {
     @Post('logout')
     @HttpCode(200)
     async logout(
-        @Req() req,
+        @Req() req: Request,
         @Res({ passthrough: true }) response: Response
     ) {
         const refreshToken = req.cookies['refreshToken'];
@@ -50,8 +61,10 @@ export class AuthController {
             await this.authService.logout(refreshToken);
         }
 
+        // Nettoyer tous les cookies
         response.clearCookie('token');
         response.clearCookie('refreshToken', { path: '/api/auth/refresh-token' });
+        response.clearCookie('XSRF-TOKEN');
 
         return { message: 'Logout successful' };
     }
@@ -59,7 +72,7 @@ export class AuthController {
     @Post('refresh-token')
     @HttpCode(200)
     async refreshToken(
-        @Req() req,
+        @Req() req: Request,
         @Res({ passthrough: true }) response: Response
     ) {
         const refreshToken = req.cookies['refreshToken'];
@@ -79,6 +92,16 @@ export class AuthController {
             maxAge: 7 * 24 * 60 * 60 * 1000,
             path: '/api/auth/refresh-token'
         });
+
+        // Renouveler également le token CSRF lors du refresh
+        if (req.csrfToken) {
+            response.cookie('XSRF-TOKEN', req.csrfToken(), {
+                httpOnly: false,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 24 * 60 * 60 * 1000
+            });
+        }
 
         return { message: 'Token refreshed successfully' };
     }
