@@ -1,8 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { UserContact } from "./user-contact.entity";
 import { UserBlocked } from "./user-blocked.entity";
-import { RefreshToken } from "src/auth/entities/refresh-token.entity";
-
+import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")

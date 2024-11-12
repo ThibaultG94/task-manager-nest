@@ -4,32 +4,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { UserContact } from './entities/user-contact.entity';
 import { UserBlocked } from './entities/user-blocked.entity';
+import { getMockRepository } from '../../test/mocks/repository.mocks';
 
 describe('UsersService', () => {
   let service: UsersService;
-
-  const mockUsersRepository = {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    remove: jest.fn()
-  };
-
-  const mockContactsRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    findOne: jest.fn(),
-    remove: jest.fn()
-  };
-
-  const mockBlockedRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
-    findOne: jest.fn(),
-    remove: jest.fn()
-  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,15 +15,15 @@ describe('UsersService', () => {
         UsersService,
         {
           provide: getRepositoryToken(User),
-          useValue: mockUsersRepository
+          useValue: getMockRepository()
         },
         {
           provide: getRepositoryToken(UserContact),
-          useValue: mockContactsRepository
+          useValue: getMockRepository()
         },
         {
           provide: getRepositoryToken(UserBlocked),
-          useValue: mockBlockedRepository
+          useValue: getMockRepository()
         }
       ],
     }).compile();

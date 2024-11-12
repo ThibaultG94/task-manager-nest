@@ -5,6 +5,7 @@ export const mockRepository = {
     save: jest.fn().mockResolvedValue({}),
     update: jest.fn().mockResolvedValue({}),
     delete: jest.fn().mockResolvedValue({}),
+    remove: jest.fn().mockResolvedValue({}),
     count: jest.fn().mockResolvedValue(0),
   };
   

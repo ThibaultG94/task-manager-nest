@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
+import { getMockRepository } from '../test/mocks/repository.mocks';
 
 describe('AppController', () => {
   let controller: AppController;
@@ -15,9 +16,7 @@ describe('AppController', () => {
         AppService,
         {
           provide: getRepositoryToken(User),
-          useValue: {
-            count: jest.fn().mockResolvedValue(0)
-          }
+          useValue: getMockRepository()
         }
       ],
     }).compile();
