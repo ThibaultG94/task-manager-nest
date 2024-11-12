@@ -2,17 +2,36 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 async function bootstrap() {
   console.log('🚀 Application starting...');
-  console.log('📊 Database config:', {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_DATABASE,
-  });
 
   try {
     const app = await NestFactory.create(AppModule);
+
+    // Ajout de Helmet AVANT les autres middlewares
+    app.use(helmet({
+      // Configuration des CSP (Content Security Policy)
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],  // Autorise uniquement les ressources de la même origine
+          scriptSrc: ["'self'"],   // Autorise uniquement les scripts de la même origine
+          styleSrc: ["'self'", "'unsafe-inline'"],  // Pour le CSS
+          imgSrc: ["'self'", "data:", "https:"],    // Pour les images
+        },
+      },
+      // Autres options de sécurité
+      crossOriginEmbedderPolicy: true,
+      crossOriginOpenerPolicy: true,
+      crossOriginResourcePolicy: { policy: "same-site" },
+      dnsPrefetchControl: true,
+      frameguard: { action: "deny" },  // Empêche le clickjacking
+      hidePoweredBy: true,             // Cache le header X-Powered-By
+      hsts: { maxAge: 31536000 },      // Force HTTPS
+      noSniff: true,                   // Empêche le MIME-type sniffing
+      referrerPolicy: { policy: "no-referrer" },
+    }));
     
     // Active la validation globale
     app.useGlobalPipes(new ValidationPipe({
@@ -29,9 +48,7 @@ async function bootstrap() {
 
     app.use(cookieParser());
     
-    const port = process.env.PORT || 3306;
-    await app.listen(port);
-    console.log(`✅ Application is running on port ${port}`);
+    await app.listen(process.env.PORT || 3306);
   } catch (error) {
     console.error('❌ Failed to start application:', error);
     process.exit(1);
